@@ -12,16 +12,16 @@
     <script>
         async function fetchRepos() {
             try {
-                const response = await fetch(`https://api.github.com/users/Ian4u14/repos`);
+                const response = await fetch(`https://api.github.com/users/Ian4u/repos`);
                 const repos = await response.json();
 
                 const repoList = document.getElementById('repo-list');
                 repos.forEach(repo => {
-                    if (repo.name !== "ian4u14.github.io") {
+                    if (repo.fork ==! true) {
                         const listItem = document.createElement('li');
                         const link = document.createElement('a');
                         const gotoButton = document.createElement('button');
-                        gotoButton.textContent = "Goto";
+                        gotoButton.textContent = "Goto "+ repo.name;
                         gotoButton.onclick = () => window.location.href = repo.html_url;
                         link.appendChild(gotoButton);
                         listItem.appendChild(link);
