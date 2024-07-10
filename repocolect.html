@@ -8,23 +8,41 @@
 <body>
     <h1>GitHub Repos</h1>
     <ul id="repo-list"></ul>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
     <script>
+        function download(data, name) {
+            const blob = new Blob([data], { type: 'application/octet-stream' });
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = name;
+            a.click();
+        }
+    
         async function fetchRepos() {
             try {
                 const response = await fetch(`https://api.github.com/users/Ian4u/repos`);
                 const repos = await response.json();
-
                 const repoList = document.getElementById('repo-list');
+    
                 repos.forEach(repo => {
-                    if (repo.fork ==! true) {
+                    if (!repo.fork) {
                         const listItem = document.createElement('li');
                         const link = document.createElement('a');
-                        const gotoButton = document.createElement('button');
-                        gotoButton.textContent = "Goto "+ repo.name;
-                        gotoButton.onclick = () => window.location.href = repo.html_url;
-                        link.appendChild(gotoButton);
+                        link.textContent = repo.name;
+                        link.href = repo.html_url;
+                        link.target = '_blank';
+    
+                        // Create the download button
+                        const download_url = `https://github.com/Ian4u/${repo.name}/archive/${repo.default_branch}.zip`
+                        const downloadButton = document.createElement('button');
+                        downloadButton.innerHTML = `<i class="fa fa-download"></i> Download`;
+                        downloadButton.onclick = () => {
+                            window.location.href = download_url
+                        };
                         listItem.appendChild(link);
+                        listItem.appendChild(downloadButton);
                         repoList.appendChild(listItem);
                     }
                 });
@@ -32,9 +50,7 @@
                 console.error('Error fetching repositories:', error);
             }
         }
-
-
+    
         fetchRepos();
     </script>
-</body>
-</html>
+    
